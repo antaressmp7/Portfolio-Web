@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bintang | Front-End Developer Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP & Plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Manrope', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        black: '#0a0a0a',
+                        white: '#f5f5f5',
+                        accent: '#CCFF00', // Nike-style Volt
+                        gray: {
+                            900: '#121212',
+                            800: '#1a1a1a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --cursor-size: 20px;
+        }
+        
+        body {
+            background-color: #050505;
+            color: #f5f5f5;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        #cursor.hovered {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-color: transparent;
+            mix-blend-mode: difference;
+        }
+
+        /* WebGL Canvas Background */
+        #webgl-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* Typography Utilities */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            color: transparent;
+            transition: all 0.5s ease;
+        }
+        .group:hover .text-outline {
+            -webkit-text-stroke: 0px;
+            color: #CCFF00;
+        }
+
+        /* Loader */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .loader-bar {
+            width: 0%;
+            height: 2px;
+            background: #CCFF00;
+            margin-top: 20px;
+        }
+
+        /* Hide scrollbar for smooth scroll feel */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body class="selection:bg-accent selection:text-black">
+
+    <!-- Custom Cursor -->
+    <div id="cursor"></div>
+
+    <!-- Loading Screen -->
+    <div class="loader">
+        <h1 class="font-display text-4xl tracking-widest uppercase">Loading</h1>
+        <div class="loader-bar"></div>
+    </div>
+
+    <!-- 3D Background -->
+    <div id="webgl-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full p-8 flex justify-between items-center z-50 mix-blend-difference">
+        <a href="#" class="hover-trigger font-display text-2xl font-bold tracking-tighter uppercase">
+            Bintang<span class="text-accent">.</span>
+        </a>
+        <div class="hidden md:flex gap-8 font-sans text-sm tracking-widest uppercase">
+            <a href="#work" class="hover-trigger hover:text-accent transition-colors">Work</a>
+            <a href="#about" class="hover-trigger hover:text-accent transition-colors">About</a>
+            <a href="#contact" class="hover-trigger hover:text-accent transition-colors">Contact</a>
+        </div>
+        <button class="hover-trigger md:hidden text-white uppercase text-sm">Menu</button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="w-full relative">
+        
+        <!-- Hero Section -->
+        <section class="h-screen w-full flex flex-col justify-center px-6 md:px-20 pt-20">
+            <div class="hero-text overflow-hidden">
+                <h1 class="font-display text-[14vw] leading-[0.85] font-bold uppercase tracking-tighter">
+                    <div class="reveal-text translate-y-full">Muhammad</div>
+                </h1>
+            </div>
+            <div class="hero-text overflow-hidden">
+                <h1 class="font-display text-[14vw] leading-[0.85] font-bold uppercase tracking-tighter text-transparent" style="-webkit-text-stroke: 2px white;">
+                    <div class="reveal-text translate-y-full">Bintang</div>
+                </h1>
+            </div>
+            <div class="hero-text overflow-hidden">
+                <h1 class="font-display text-[14vw] leading-[0.85] font-bold uppercase tracking-tighter flex items-center gap-4">
+                    <div class="reveal-text translate-y-full flex items-center gap-4">
+                        Mahaputra <span class="block w-4 h-4 md:w-8 md:h-8 bg-accent rounded-full animate-pulse"></span>
+                    </div>
+                </h1>
+            </div>
+            
+            <div class="mt-12 flex justify-between items-end overflow-hidden">
+                <p class="reveal-text-sm translate-y-full font-sans text-gray-400 max-w-md text-sm md:text-base leading-relaxed">
+                    My name is Muhammad Bintang Mahaputra, a 24-year-old web developer from Palu. I like creating unique things with web technology.
+                </p>
+                <div class="reveal-text-sm translate-y-full hidden md:block animate-bounce">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marquee Section -->
+        <section class="py-20 border-y border-white/10 overflow-hidden bg-black/50 backdrop-blur-sm">
+            <div class="marquee-container flex whitespace-nowrap">
+                <h2 class="font-display text-8xl md:text-9xl font-bold uppercase tracking-tighter text-white/20 mr-10">
+                    • PHP • HTML • Next.js • JavaScript • Tailwind CSS • MySql • Microsoft • Visual Studio Code •
+                </h2>
+                <h2 class="font-display text-8xl md:text-9xl font-bold uppercase tracking-tighter text-white/20 mr-10">
+                    • PHP • HTML • Next.js • JavaScript • Tailwind CSS • MySql • Microsoft • Visual Studio Code •
+                </h2>
+            </div>
+        </section>
+
+        <!-- Work Section -->
+        <section id="work" class="py-32 px-6 md:px-20">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-20">
+                <h3 class="font-display text-6xl md:text-8xl font-bold uppercase tracking-tight">Selected<br>Projects</h3>
+                <p class="font-sans text-gray-400 mt-4 md:mt-0">(2025 — Present)</p>
+            </div>
+
+            <!-- Project 1 -->
+            <div class="project-card group relative w-full border-t border-white/20 py-20 cursor-pointer hover-trigger">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                    <h4 class="font-display text-5xl md:text-7xl font-bold uppercase text-outline group-hover:translate-x-4 transition-transform duration-500">E-Commerce Platform</h4>
+                    <p class="font-sans text-base md:text-lg text-gray-400 mt-3 md:mt-4 max-w-2xl">
+                        Situs web yang digunakan untuk memberi informasi produk atau layanan secara online.
+                        Pengguna dapat melihat informasi produk, dapat melakukan pesanan melalui GrabFood & GoFood
+                        hingga informasi tentang coffeshop tanpa harus datang ke toko fisik.
+                    </p>
+                    <p class="font-sans text-sm md:text-base uppercase tracking-widest mt-2 md:mt-0 text-gray-500 group-hover:text-accent transition-colors">PHP, Bootstrap & MySql</p>
+                    <a href="https://miyucoffeestore.vercel.app/" target="_blank"
+                    class="flex items-center gap-2 text-accent font-semibold uppercase tracking-wide hover:translate-x-1 transition-transform duration-300">
+                        View Project
+                        <span class="text-2xl">→</span>
+                    </a>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[50vh] bg-gradient-to-br from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none z-0 scale-90 group-hover:scale-100 rotate-2 group-hover:rotate-0 overflow-hidden">
+                    <img src="miyu.png" alt="Profile Photo" class="w-full h-full object-cover"></div>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card group relative w-full border-t border-white/20 py-20 cursor-pointer hover-trigger">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                    <h4 class="font-display text-5xl md:text-7xl font-bold uppercase text-outline group-hover:translate-x-4 transition-transform duration-500">Decision Support System</h4>
+                    <p class="font-sans text-base md:text-lg text-gray-400 mt-3 md:mt-4 max-w-2xl">
+                        Aplikasi Sistem Rekomendasi Anggaran Kegiatan (SIREKA) Menggunakan Metode MOORA merupakan sebuah platform pendukung keputusan yang dirancang untuk 
+                        membantu Dinas Kebudayaan Provinsi Sulawesi Tengah dalam menentukan prioritas alokasi anggaran kegiatan secara lebih objektif dan terukur.
+                        Sistem ini mengolah berbagai data kegiatan hingga data kriteria penilaian yang kemudian dihitung menggunakan metode Multi-Objective Optimization on the basis of Ratio Analysis (MOORA).
+                        Hasilnya, aplikasi ini menghasilkan rekomendasi peringkat kegiatan yang paling layak untuk didanai, sehingga proses perencanaan anggaran menjadi lebih efektif, transparan, dan akuntabel.
+                    </p>
+                    <p class="font-sans text-sm md:text-base uppercase tracking-widest mt-2 md:mt-0 text-gray-500 group-hover:text-accent transition-colors">PHP, Bootstrap & MySql</p>
+                    <a href="moora.pdf" target="_blank"
+                    class="flex items-center gap-2 text-accent font-semibold uppercase tracking-wide hover:translate-x-1 transition-transform duration-300">
+                        View Project
+                        <span class="text-2xl">→</span>
+                    </a>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[50vh] bg-gradient-to-br from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none z-0 scale-90 group-hover:scale-100 -rotate-2 group-hover:rotate-0 overflow-hidden">
+                    <img src="sireka.png" alt="Profile Photo" class="w-full h-full object-cover"></div>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card group relative w-full border-t border-white/20 py-20 cursor-pointer hover-trigger">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                    <h4 class="font-display text-5xl md:text-7xl font-bold uppercase text-outline group-hover:translate-x-4 transition-transform duration-500">Museum Collection Management System</h4>
+                    <p class="font-sans text-base md:text-lg text-gray-400 mt-3 md:mt-4 max-w-2xl">
+                        Aplikasi Koleksi UPT Museum Taman Budaya Provinsi Sulawesi Tengah adalah platform pendataan digital yang dirancang
+                        untuk mengelola arsip koleksi museum secara lebih tertata, modern, dan mudah diakses. Aplikasi ini menyediakan fitur katalog 
+                        koleksi, pencarian cepat, detail informasi objek budaya, serta dokumentasi foto.
+                        Sistem ini memudahkan petugas museum dalam proses pendataan, pelestarian, dan publikasi informasi koleksi kepada masyarakat.
+                    </p>
+                    <p class="font-sans text-sm md:text-base uppercase tracking-widest mt-2 md:mt-0 text-gray-500 group-hover:text-accent transition-colors">PHP, Bootstrap & MySql</p>
+                    <a href="project3.pdf" target="_blank"
+                    class="flex items-center gap-2 text-accent font-semibold uppercase tracking-wide hover:translate-x-1 transition-transform duration-300">
+                        View Project
+                        <span class="text-2xl">→</span>
+                    </a>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[50vh] bg-gradient-to-br from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none z-0 scale-90 group-hover:scale-100 -rotate-2 group-hover:rotate-0 overflow-hidden">
+                    <img src="project3.png" alt="Profile Photo" class="w-full h-full object-cover"></div>
+                </div>
+            </div>
+
+            <!-- Project 4 -->
+            <div class="project-card group relative w-full border-t border-white/20 py-20 cursor-pointer hover-trigger">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                    <h4 class="font-display text-5xl md:text-7xl font-bold uppercase text-outline group-hover:translate-x-4 transition-transform duration-500">Civil Servant Pay Slip Digital Platform</h4>
+                    <p class="font-sans text-base md:text-lg text-gray-400 mt-3 md:mt-4 max-w-2xl">
+                        Aplikasi E-Slip ASN merupakan sistem berbasis web yang digunakan untuk menghasilkan slip gaji pegawai ASN secara otomatis dan lebih efisien.
+                        Melalui aplikasi ini, pegawai dapat mengakses data gaji, potongan, tunjangan, serta mengunduh slip gaji dalam format digital kapan saja tanpa 
+                        harus menunggu proses manual dari instansi. Sistem ini membantu meningkatkan transparansi, mempercepat layanan administrasi kepegawaian, dan mendukung digitalisasi birokrasi.
+                    </p>
+                    <p class="font-sans text-sm md:text-base uppercase tracking-widest mt-2 md:mt-0 text-gray-500 group-hover:text-accent transition-colors">PHP, Bootstrap & MySql</p>
+                    <a href="project4.pdf" target="_blank"
+                    class="flex items-center gap-2 text-accent font-semibold uppercase tracking-wide hover:translate-x-1 transition-transform duration-300">
+                        View Project
+                        <span class="text-2xl">→</span>
+                    </a>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[50vh] bg-gradient-to-br from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none z-0 scale-90 group-hover:scale-100 -rotate-2 group-hover:rotate-0 overflow-hidden">
+                    <img src="project4.png" alt="Profile Photo" class="w-full h-full object-cover"></div>
+                </div>
+            </div>
+
+            <!-- Project 5 -->
+            <div class="project-card group relative w-full border-t border-b border-white/20 py-20 cursor-pointer hover-trigger">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                    <h4 class="font-display text-5xl md:text-7xl font-bold uppercase text-outline group-hover:translate-x-4 transition-transform duration-500">Portfolio Website</h4>
+                    <p class="font-sans text-base md:text-lg text-gray-400 mt-2 md:mt-4 max-w-2xl">
+                        Portfolio Web Animasi 3D Interaktif adalah website kreatif yang menampilkan proyek, keahlian, 
+                        dan karya visual melalui tampilan animasi 3D yang responsif dan interaktif.
+                        Tampilan ini memberikan pengalaman pengguna yang lebih menarik dan imersif. 
+                        Website ini berfungsi sebagai media personal branding untuk menunjukkan kemampuan desain, animasi, serta pengembangan web interaktif.
+                    </p>
+                    <p class="font-sans text-sm md:text-base uppercase tracking-widest mt-2 md:mt-0 text-gray-500 group-hover:text-accent transition-colors">Next Js & Tailwind</p>
+                    <a href="project5.pdf" target="_blank"
+                    class="flex items-center gap-2 text-accent font-semibold uppercase tracking-wide hover:translate-x-1 transition-transform duration-300">
+                        View Project
+                        <span class="text-2xl">→</span>
+                    </a>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[50vh] bg-gradient-to-br from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none z-0 scale-90 group-hover:scale-100 rotate-1 group-hover:rotate-0 overflow-hidden">
+                    <img src="project5.png" alt="Profile Photo" class="w-full h-full object-cover"></div>
+                </div>
+            </div>
+            
+            <!-- Project 6: About Me -->
+            <div class="project-card group relative w-full border-t border-b border-white/20 py-20 cursor-pointer hover-trigger">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+                    <h4 class="font-display text-5xl md:text-7xl font-bold uppercase text-outline group-hover:translate-x-4 transition-transform duration-500">Muhammad Bintang Mahaputra</h4>
+                    <p class="font-sans text-sm md:text-base uppercase tracking-widest mt-2 md:mt-0 text-gray-500 group-hover:text-accent transition-colors">Front-End Developer</p>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[50vh] bg-gradient-to-br from-gray-800 to-gray-900 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none z-0 scale-90 group-hover:scale-100 rotate-1 group-hover:rotate-0 overflow-hidden">
+                    <img src="project6.png" alt="Profile Photo" class="w-full h-full object-cover"></div>
+                </div>
+                <p class="font-sans text-sm md:text-base mt-10 text-gray-400 max-w-3xl leading-relaxed">
+                    Passionate front-end developer specializing in building responsive and interactive web applications. I convert designs into clean, efficient code using modern technologies like React and Next.js. With expertise in HTML, CSS, JavaScript, and various frameworks, I create seamless user experiences that are both visually appealing and highly functional. My approach combines pixel-perfect implementation with performance optimization to deliver exceptional digital products.
+                </p>
+            </div>
+        </section>
+
+        <!-- Philosophy Section -->
+        <section id="about" class="py-32 px-6 md:px-20 bg-white text-black relative overflow-hidden">
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+
+                <!-- LEFT TEXT -->
+                <div class="text-left">
+                    <p class="font-sans text-xs uppercase tracking-widest mb-4 text-gray-500">My Approach</p>
+                    
+                    <h3 class="philosophy-text font-display text-lg md:text-2xl font-semibold leading-relaxed">
+                        Saya adalah lulusan Sarjana Teknik Informatika dari Universitas Tadulako dengan fokus pada pengembangan aplikasi berbasis web. 
+                        Selama berkarier, saya memiliki pengalaman bekerja sebagai Operator Keuangan di Dinas Kebudayaan Provinsi Sulawesi Tengah, 
+                        di mana saya terlibat dalam pengelolaan data keuangan, penyusunan laporan, serta administrasi anggaran dan realisasi keuangan harian hingga 
+                        pertanggungjawaban keuangan.<br><br>
+                        Dengan latar belakang teknis di bidang informatika dan pengalaman praktis dalam pengelolaan keuangan pemerintahan, saya 
+                        terbiasa bekerja secara detail, terstruktur, dan bertanggung jawab. Selain itu, saya menguasai berbagai tools pengembangan 
+                        web seperti PHP, HTML, CSS, JavaScript, MySQL, serta Microsoft untuk kebutuhan administrasi dan analisis data.<br><br>
+                        Saya selalu berusaha untuk terus belajar, mengembangkan kemampuan baru, dan memberikan hasil kerja yang terbaik dalam 
+                        setiap tugas yang saya kerjakan.
+                    </h3>
+                </div>
+
+                <!-- RIGHT PHOTO + BUTTONS -->
+                    <div class="flex flex-col justify-center md:justify-end items-center md:items-end">
+                        <!-- PHOTO -->
+                        <div class="w-80 h-80 md:w-[420px] md:h-[420px] rounded-2xl overflow-hidden shadow-xl bg-gray-200">
+                            <img src="foto_bintang.jpg" alt="Profile Photo" class="w-full h-full object-cover">
+                        </div>
+                        <!-- BUTTONS BELOW PHOTO -->
+                        <div class="button-center flex gap-4 mt-6">
+                            <a href="cv_kreatif.pdf" 
+                            class="px-5 py-2 rounded-xl border border-black text-black text-sm md:text-base font-medium hover:bg-black hover:text-white transition">
+                                CV Kreatif
+                            </a>
+                            <a href="cv_ats.pdf" 
+                            class="px-5 py-2 rounded-xl border border-black text-black text-sm md:text-base font-medium hover:bg-black hover:text-white transition">
+                                CV ATS
+                            </a>
+                        </div>
+                    </div>
+
+            <!-- Decorative Elements -->
+            <div class="absolute top-20 left-10 w-24 h-24 border-2 border-black rounded-full opacity-20 animate-spin-slow"></div>
+            <div class="absolute bottom-20 right-10 w-32 h-32 bg-black opacity-5 rounded-full blur-xl"></div>
+        </section>
+
+        <!-- Footer -->
+        <section id="contact" class="h-screen w-full flex flex-col justify-between px-6 md:px-20 py-20 relative bg-[#050505]">
+            <div class="w-full h-[1px] bg-white/20 mb-10"></div>
+            
+            <div>
+                <h2 class="font-display text-[12vw] leading-none uppercase font-bold tracking-tighter hover:text-accent transition-colors duration-300 cursor-pointer">
+                    Let's Connect
+                </h2>
+                <a href="mailto:gustiawan@gdev.id" class="hover-trigger font-display text-[12vw] leading-none uppercase font-bold tracking-tighter text-gray-800 hover:text-white transition-colors duration-300">
+                    @mpbintang_
+                </a>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-end mt-10">
+                <div class="flex gap-6 font-sans text-sm uppercase tracking-widest text-gray-400">
+                    <a href="https://www.instagram.com/mpbintang_/" class="hover:text-accent hover-trigger">instagram</a>
+                    <a href="https://github.com/antaressmp7" class="hover:text-accent hover-trigger">GitHub</a>
+                    <a class="hover:text-accent hover-trigger">+62 821 8930 4137</a>
+                </div>
+                <p class="font-sans text-sm text-gray-600 mt-4 md:mt-0">© 2025 Bintang. All Rights Reserved.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --------------------------------------------------
+        // 1. LENIS SMOOTH SCROLL
+        // --------------------------------------------------
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Connect Lenis to ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // --------------------------------------------------
+        // 2. CURSOR LOGIC
+        // --------------------------------------------------
+        const cursor = document.getElementById('cursor');
+        const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1,
+                ease: "power2.out"
+            });
+        });
+
+        hoverTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+            trigger.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+        });
+
+        // --------------------------------------------------
+        // 3. THREE.JS BACKGROUND SCENE
+        // --------------------------------------------------
+        const container = document.getElementById('webgl-container');
+        
+        // Scene Setup
+        const scene = new THREE.Scene();
+        // Fog for depth
+        scene.fog = new THREE.FogExp2(0x050505, 0.002);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Object - Procedural Wireframe Sphere
+        const geometry = new THREE.IcosahedronGeometry(2.5, 2); // Radius, Detail
+        const material = new THREE.MeshBasicMaterial({ 
+            color: 0x444444, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.3
+        });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        // Secondary Particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 700;
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.02,
+            color: 0xCCFF00, // Accent Color
+            transparent: true,
+            opacity: 0.8
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Mouse Interaction
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Animation Loop for ThreeJS
+        const clock = new THREE.Clock();
+
+        function animateThree() {
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Rotate Sphere
+            sphere.rotation.y += 0.5 * (targetX - sphere.rotation.y);
+            sphere.rotation.x += 0.05 * (targetY - sphere.rotation.x);
+            sphere.rotation.z += 0.002;
+
+            // Pulse Sphere (Breathing effect)
+            sphere.scale.setScalar(1 + Math.sin(elapsedTime * 0.5) * 0.05);
+
+            // Rotate Particles
+            particlesMesh.rotation.y = -elapsedTime * 0.05;
+            particlesMesh.rotation.x = mouseY * 0.0001;
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animateThree);
+        }
+        animateThree();
+
+        // Resize Handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --------------------------------------------------
+        // 4. GSAP ANIMATIONS
+        // --------------------------------------------------
+        
+        // Loading Sequence
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+
+            // Loader Bar
+            tl.to('.loader-bar', {
+                width: '100%',
+                duration: 1.5,
+                ease: "power2.inOut"
+            })
+            .to('.loader', {
+                y: '-100%',
+                duration: 1,
+                ease: "expo.inOut",
+                delay: 0.2
+            })
+            // Hero Text Reveal
+            .to('.reveal-text', {
+                y: 0,
+                duration: 1.5,
+                stagger: 0.2,
+                ease: "power4.out"
+            }, "-=0.5")
+            .to('.reveal-text-sm', {
+                y: 0,
+                duration: 1,
+                opacity: 1,
+                stagger: 0.1,
+                ease: "power2.out"
+            }, "-=1");
+        });
+
+        // Marquee Animation
+        gsap.to(".marquee-container", {
+            xPercent: -50,
+            ease: "none",
+            duration: 20,
+            repeat: -1
+        });
+
+        // Philosophy Text Reveal on Scroll
+        gsap.from(".philosophy-text", {
+            scrollTrigger: {
+                trigger: "#about",
+                start: "top 70%",
+                end: "bottom bottom",
+                toggleActions: "play none none reverse"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out"
+        });
+
+        // Project Cards Parallax
+        document.querySelectorAll('.project-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top bottom",
+                    end: "top center",
+                    scrub: 1
+                },
+                y: 100,
+                opacity: 0.5,
+                duration: 1
+            });
+        });
+
+        // Footer Reveal
+        gsap.from("#contact div", {
+            scrollTrigger: {
+                trigger: "#contact",
+                start: "top 60%",
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power2.out"
+        });
+
+    </script>
+</body>
+</html>
