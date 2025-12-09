@@ -375,13 +375,15 @@
                             <img src="foto_bintang.jpg" alt="Profile Photo" class="w-full h-full object-cover">
                         </div>
                         <!-- BUTTONS -->
-                        <div class="button-center flex flex-wrap gap-4 mt-6">
+                        <div class="button-center flex gap-4 mt-6">
                             <a href="cv_kreatif.pdf" 
-                               class="px-5 py-2 rounded-xl border border-black text-black text-sm md:text-base font-medium hover:bg-black hover:text-white transition">
+                            class="px-5 py-2 rounded-xl border border-black text-black text-sm md:text-base font-medium hover:bg-black hover:text-white transition">
                                 CV Kreatif
                             </a>
+                        
                             <a href="cv_ats.pdf"
-                               class="px-5 py-2 rounded-xl border border-black text-black text-sm md:text-base font-medium hover:bg-black hover:text-white transition">
+                            class="px-5 py-2 rounded-xl border border-black text-black text-sm md:text-base font-medium hover:bg-black hover:text-white transition"
+                            target="_blank" rel="noopener">
                                 CV ATS
                             </a>
                         </div>
@@ -643,9 +645,18 @@
         });
 
     </script>
+
+    <script>
+    document.querySelectorAll('a[href$=".pdf"]').forEach(link => {
+        link.addEventListener("touchend", e => {
+            window.open(link.href, "_blank");
+        }, {passive:false});
+    });
+    </script>
 </body>
 
 </html>
+
 
 
 
